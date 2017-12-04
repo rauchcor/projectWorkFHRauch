@@ -1,0 +1,12 @@
+﻿DROP TABLE __MigrationHistory
+DROP TABLE [User]
+DROP TABLE UserRole
+DROP TABLE Vorgang
+DROP TABLE VorgangsStatus
+DROP TABLE Auftrag
+DROP TABLE UserToSegment
+DROP TABLE UserToBereich
+DROP TABLE Maschine
+DROP TABLE Segment
+DROP TABLE Bereich
+DROP TABLE Material
