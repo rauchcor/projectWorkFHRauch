@@ -29,17 +29,6 @@ namespace ProjectApiNetCore
         {
             services.AddDbContext<CarContext>(opt => opt.UseInMemoryDatabase("CarList"));
             services.AddMvc();
-        
-
-            services.AddAuthentication("Bearer")
-                .AddIdentityServerAuthentication(options =>
-                {
-                    options.Authority = "http://localhost:5000";
-                    options.RequireHttpsMetadata = false;
-
-                    options.ApiName = "api";
-                });
-
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "ProjectApiCore", Version = "v1" });
@@ -53,7 +42,7 @@ namespace ProjectApiNetCore
             {
                 app.UseDeveloperExceptionPage();
             }
-            app.UseAuthentication();
+
             app.UseSwagger();
 
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint.
