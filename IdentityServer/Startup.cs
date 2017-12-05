@@ -1,4 +1,5 @@
-﻿using IdentityServer4;
+﻿using System.Reflection;
+using IdentityServer4;
 using IdentityServer4.AccessTokenValidation;
 using IdentityServer4.Services;
 using IdentityServer4.Validation;
@@ -24,38 +25,27 @@ namespace IdentityServer
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-          
+
             services.AddMvc();
             services.AddIdentityServer()
-                .AddDeveloperSigningCredential()
                 .AddInMemoryApiResources(Config.GetApis())
                 .AddInMemoryIdentityResources(Config.GetIdentityResources())
                 .AddInMemoryClients(Config.GetClients())
                 .AddTestUsers(TestUsers.Users)
-                .AddSigningCredential(IdentityServerBuilderExtensionsCrypto.CreateRsaSecurityKey());
+                .AddSigningCredential(IdentityServerBuilderExtensionsCrypto.CreateRsaSecurityKey())
+                .AddInMemoryPersistedGrants();
 
-            services.AddAuthentication()
-                //.AddGoogle("Google", options =>
-                //{
-                //    options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
-                
-
-                //    options.ClientId = "504152530791k3vb9m4sb2v0b6dge037jbv8detjgblu.apps.googleusercontent.com";
-                //    options.ClientSecret = "aY_wkMhT852EOjXlYv4k_DYY";
-                //})
-                .AddIdentityServerAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme, options =>
+            services.AddAuthentication(options =>
                 {
-                    options.Authority = "http://localhost:5000";
-                    options.RequireHttpsMetadata = false;
-                    options.ApiName = "api";
-                    options.ApiSecret = "secret";
+                    options.DefaultScheme = "cookie";
+                    options.DefaultChallengeScheme = "oidc";
                 })
+                .AddCookie("cookie")
                 .AddOpenIdConnect("oidc", "OpenIdConnect", options =>
                 {
                     options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                     options.SignOutScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                     options.RequireHttpsMetadata = false;
-
                     options.Authority = "http://localhost:5000";
                     options.ClientId = "implicit";
                     options.ResponseType = "id_token";
@@ -77,8 +67,8 @@ namespace IdentityServer
                      options.ApiSecret = "secret";
                  });
                  */
-             // add CORS policy for non-IdentityServer endpoints
-             services.AddCors(options =>
+            // add CORS policy for non-IdentityServer endpoints
+            services.AddCors(options =>
              {
                  options.AddPolicy("api", policy =>
                  {
@@ -86,9 +76,9 @@ namespace IdentityServer
                  });
              });
 
-             // demo versions
-             services.AddTransient<IRedirectUriValidator, RedirectValidator>();
-             services.AddTransient<ICorsPolicyService, CorsPolicy>();
+            // demo versions
+            services.AddTransient<IRedirectUriValidator, RedirectValidator>();
+            services.AddTransient<ICorsPolicyService, CorsPolicy>();
 
             services.AddSwaggerGen(c =>
             {
@@ -105,6 +95,14 @@ namespace IdentityServer
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseDeveloperExceptionPage();
+
+            app.UseCors("api");
+            app.UseAuthentication();
+            app.UseStaticFiles();
+            app.UseIdentityServer();
+            app.UseMvcWithDefaultRoute();
+
             app.UseSwagger();
 
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint.
@@ -112,14 +110,6 @@ namespace IdentityServer
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "IdentityServer V1");
             });
-            app.UseDeveloperExceptionPage();
-
-            app.UseCors("api");
-            app.UseAuthentication();
-
-            app.UseStaticFiles();
-            app.UseIdentityServer();
-            app.UseMvcWithDefaultRoute();
         }
     }
 }

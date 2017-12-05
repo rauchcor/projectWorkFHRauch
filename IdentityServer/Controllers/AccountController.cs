@@ -25,7 +25,7 @@ using ProjectApiNetCore.Service;
 
 namespace ProjectApiNetCore.Controllers
 {
-    [Microsoft.AspNetCore.Mvc.Route("api/[controller]")]
+    [Microsoft.AspNetCore.Mvc.Route("account")]
     public class AccountController : Controller
     {
         private readonly TestUserStore _users;
@@ -161,6 +161,19 @@ namespace ProjectApiNetCore.Controllers
             {
                 // see if windows auth has already been requested and succeeded
                 var result = await HttpContext.AuthenticateAsync(AccountOptions.WindowsAuthenticationSchemeName);
+
+                if (result?.Succeeded != true)
+                {
+                    throw new Exception("External authentication error");
+                }
+
+                // retrieve claims of the external user
+                var externalUser = result.Principal;
+                if (externalUser == null)
+                {
+                    throw new Exception("External authentication error");
+                }
+
                 if (result?.Principal is WindowsPrincipal wp)
                 {
                     props.Items.Add("scheme", AccountOptions.WindowsAuthenticationSchemeName);
@@ -192,6 +205,7 @@ namespace ProjectApiNetCore.Controllers
             }
             else
             {
+
                 // start challenge and roundtrip the return URL
                 props.Items.Add("scheme", provider);
                 return Challenge(props, provider);

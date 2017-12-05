@@ -78,6 +78,7 @@ namespace ProjectApiNetCore.Service
                 ReturnUrl = returnUrl,
                 Username = context?.LoginHint,
                 ExternalProviders = providers.ToArray()
+
             };
         }
 
