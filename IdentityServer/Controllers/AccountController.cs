@@ -71,7 +71,7 @@ namespace ProjectApiNetCore.Controllers
         /// Handle postback from username/password login
         /// </summary>
         [Microsoft.AspNetCore.Mvc.HttpPost]
-        [ValidateAntiForgeryToken]
+       // [ValidateAntiForgeryToken]
         [Microsoft.AspNetCore.Mvc.Route("login")]
         public async Task<IActionResult> Login([Microsoft.AspNetCore.Mvc.FromBody]LoginInputModel model,[FromUri] string button)
         {

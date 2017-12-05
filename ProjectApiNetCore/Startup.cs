@@ -2,6 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using IdentityServer;
+using IdentityServer4;
+using IdentityServer4.AccessTokenValidation;
+using IdentityServer4.Services;
+using IdentityServer4.Validation;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -29,16 +35,52 @@ namespace ProjectApiNetCore
         {
             services.AddDbContext<CarContext>(opt => opt.UseInMemoryDatabase("CarList"));
             services.AddMvc();
-        
 
-            services.AddAuthentication("Bearer")
-                .AddIdentityServerAuthentication(options =>
+
+            //services.AddAuthentication("Bearer")
+            //    .AddIdentityServerAuthentication(options =>
+            //    {
+            //        options.Authority = "http://localhost:5000";
+            //        options.RequireHttpsMetadata = false;
+
+            //        options.ApiName = "api";
+            //    });
+
+            //services.AddAuthentication()
+            //    .AddGoogle("Google", options =>
+            //    {
+            //        options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
+
+            //        options.ClientId = "504152530791k3vb9m4sb2v0b6dge037jbv8detjgblu.apps.googleusercontent.com";
+            //        options.ClientSecret = "aY_wkMhT852EOjXlYv4k_DYY";
+            //    })
+            //    .AddIdentityServerAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme, options =>
+            //    {
+            //        options.Authority = "http://localhost:5000";
+
+            //        options.ApiName = "api";
+            //        options.ApiSecret = "secret";
+            //    })
+            //    .AddOpenIdConnect("oidc", "OpenIdConnect", options =>
+            //    {
+            //        options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            //        options.SignOutScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+
+            //        options.Authority = "http://localhost:5000";
+            //        options.ClientId = "implicit";
+            //        options.ResponseType = "id_token";
+            //        options.SaveTokens = false;
+            //    });
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("api", policy =>
                 {
-                    options.Authority = "http://localhost:5000";
-                    options.RequireHttpsMetadata = false;
-
-                    options.ApiName = "api";
+                    policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
                 });
+            });
+            services.AddTransient<IRedirectUriValidator, RedirectValidator>();
+            services.AddTransient<ICorsPolicyService, CorsPolicy>();
 
             services.AddSwaggerGen(c =>
             {

@@ -1,6 +1,8 @@
-﻿using IdentityServer4.AccessTokenValidation;
+﻿using IdentityServer4;
+using IdentityServer4.AccessTokenValidation;
 using IdentityServer4.Services;
 using IdentityServer4.Validation;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -32,6 +34,33 @@ namespace IdentityServer
                 .AddTestUsers(TestUsers.Users)
                 .AddSigningCredential(IdentityServerBuilderExtensionsCrypto.CreateRsaSecurityKey());
 
+            services.AddAuthentication()
+                //.AddGoogle("Google", options =>
+                //{
+                //    options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
+                
+
+                //    options.ClientId = "504152530791k3vb9m4sb2v0b6dge037jbv8detjgblu.apps.googleusercontent.com";
+                //    options.ClientSecret = "aY_wkMhT852EOjXlYv4k_DYY";
+                //})
+                .AddIdentityServerAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme, options =>
+                {
+                    options.Authority = "http://localhost:5000";
+                    options.RequireHttpsMetadata = false;
+                    options.ApiName = "api";
+                    options.ApiSecret = "secret";
+                })
+                .AddOpenIdConnect("oidc", "OpenIdConnect", options =>
+                {
+                    options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.SignOutScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.RequireHttpsMetadata = false;
+
+                    options.Authority = "http://localhost:5000";
+                    options.ClientId = "implicit";
+                    options.ResponseType = "id_token";
+                    options.SaveTokens = false;
+                });
             /* services.AddIdentityServer()
                  .AddInMemoryApiResources(Config.GetApis())
                  .AddInMemoryIdentityResources(Config.GetIdentityResources())
@@ -47,7 +76,7 @@ namespace IdentityServer
                      options.ApiName = "api";
                      options.ApiSecret = "secret";
                  });
-
+                 */
              // add CORS policy for non-IdentityServer endpoints
              services.AddCors(options =>
              {
@@ -59,7 +88,7 @@ namespace IdentityServer
 
              // demo versions
              services.AddTransient<IRedirectUriValidator, RedirectValidator>();
-             services.AddTransient<ICorsPolicyService, CorsPolicy>();*/
+             services.AddTransient<ICorsPolicyService, CorsPolicy>();
 
             services.AddSwaggerGen(c =>
             {
