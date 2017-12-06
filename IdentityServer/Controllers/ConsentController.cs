@@ -1,19 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Web.Http;
-using System.Web.Http.Results;
+﻿// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+
 using IdentityServer4.Services;
 using IdentityServer4.Stores;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using ProjectApiNetCore.Models;
+using System.Threading.Tasks;
 
-namespace IdentityServer.Controllers
+namespace IdentityServer4.Quickstart.UI
 {
-    [SecurityHeader]
-    [Microsoft.AspNetCore.Mvc.Route("consent")]
+    /// <summary>
+    /// This controller processes the consent UI
+    /// </summary>
+    [SecurityHeaders]
+    [Authorize]
     public class ConsentController : Controller
     {
         private readonly ConsentService _consent;
@@ -32,24 +34,24 @@ namespace IdentityServer.Controllers
         /// </summary>
         /// <param name="returnUrl"></param>
         /// <returns></returns>
-        [Microsoft.AspNetCore.Mvc.HttpGet]
-        public async Task<IActionResult> Index([FromUri]string returnUrl)
+        [HttpGet]
+        public async Task<IActionResult> Index(string returnUrl)
         {
             var vm = await _consent.BuildViewModelAsync(returnUrl);
             if (vm != null)
             {
-                return Ok( vm);
+                return View("Index", vm);
             }
 
-            return BadRequest();
+            return View("Error");
         }
 
         /// <summary>
         /// Handles the consent screen postback
         /// </summary>
-        [Microsoft.AspNetCore.Mvc.HttpPost]
-       // [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Index([Microsoft.AspNetCore.Mvc.FromBody]ConsentInputModel model)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Index(ConsentInputModel model)
         {
             var result = await _consent.ProcessConsent(model);
 
@@ -65,10 +67,10 @@ namespace IdentityServer.Controllers
 
             if (result.ShowView)
             {
-                return Ok( result.ViewModel);
+                return View("Index", result.ViewModel);
             }
 
-            return BadRequest();
+            return View("Error");
         }
     }
 }

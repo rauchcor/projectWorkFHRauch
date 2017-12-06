@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
-namespace ProjectApiNetCore.Models
+
+using System;
+
+namespace IdentityServer4.Quickstart.UI
 {
     public class AccountOptions
     {
-
         public static bool AllowLocalLogin = true;
         public static bool AllowRememberLogin = true;
         public static TimeSpan RememberMeLoginDuration = TimeSpan.FromDays(30);
@@ -19,8 +19,8 @@ namespace ProjectApiNetCore.Models
         // windows auth enabled.
         public static bool WindowsAuthenticationEnabled = true;
         public static bool IncludeWindowsGroups = false;
-        // specify the Windows authentication scheme and display name
-        public static readonly string WindowsAuthenticationSchemeName = "Windows";
+        // specify the Windows authentication scheme
+        public static readonly string WindowsAuthenticationSchemeName = Microsoft.AspNetCore.Server.IISIntegration.IISDefaults.AuthenticationScheme;
 
         public static string InvalidCredentialsErrorMessage = "Invalid username or password";
     }

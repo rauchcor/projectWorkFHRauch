@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using IdentityServer4;
 using IdentityServer4.Models;
 
 namespace IdentityServer
@@ -14,8 +15,7 @@ namespace IdentityServer
             return new List<IdentityResource>
             {
                 new IdentityResources.OpenId(),
-                new IdentityResources.Profile(),
-                new IdentityResources.Email(),
+                new IdentityResources.Profile()
             };
         }
 
@@ -48,18 +48,21 @@ namespace IdentityServer
                 // implicit (e.g. SPA or OIDC authentication)
                 new Client
                 {
-                    ClientId = "implicit",
-                    ClientName = "Implicit Client",
+                    ClientId = "mvc",
+                    ClientName = "OIDC Client",
                     AllowAccessTokensViaBrowser = true,
                     RequireConsent = true,
-                    RedirectUris = new List<string> {"https://localhost:5000/signin-oidc"},
-                    PostLogoutRedirectUris = new List<string> {"https://localhost:5000"},
-
                     AllowedGrantTypes = GrantTypes.Implicit,
-                    AllowedScopes = { "openid", "profile", "email", "api" },
+                    RedirectUris = { "http://localhost:5000/signin-oidc" },
+                    PostLogoutRedirectUris = { "http://localhost:5000/signout-callback-oidc" },
+
+                    AllowedScopes = new List<string>
+                    {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile
+                    }
                 }
 
-                
             };
         }
     }

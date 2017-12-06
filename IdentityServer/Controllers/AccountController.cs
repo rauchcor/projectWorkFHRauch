@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+
 using IdentityModel;
 using IdentityServer4.Services;
 using IdentityServer4.Stores;
@@ -14,18 +14,20 @@ using System.Linq;
 using System.Security.Claims;
 using System.Security.Principal;
 using System.Threading.Tasks;
-using System.Web.Http;
 using IdentityServer;
 using Microsoft.AspNetCore.Authentication;
 using IdentityServer4.Events;
 using IdentityServer4.Extensions;
 using IdentityServer4.Models;
-using ProjectApiNetCore.Models;
-using ProjectApiNetCore.Service;
 
-namespace ProjectApiNetCore.Controllers
+namespace IdentityServer4.Quickstart.UI
 {
-    [Microsoft.AspNetCore.Mvc.Route("account")]
+    /// <summary>
+    /// This sample controller implements a typical login/logout/provision workflow for local and external accounts.
+    /// The login service encapsulates the interactions with the user data store. This data store is in-memory only and cannot be used for production!
+    /// The interaction service provides a way for the UI to communicate with identityserver for validation and context retrieval
+    /// </summary>
+    [SecurityHeaders]
     public class AccountController : Controller
     {
         private readonly TestUserStore _users;
@@ -51,9 +53,8 @@ namespace ProjectApiNetCore.Controllers
         /// <summary>
         /// Show login page
         /// </summary>
-        [Microsoft.AspNetCore.Mvc.HttpGet]
-        [Microsoft.AspNetCore.Mvc.Route("login")]
-        public async Task<IActionResult> Login([FromUri] string returnUrl)
+        [HttpGet]
+        public async Task<IActionResult> Login(string returnUrl)
         {
             // build a model so we know what to show on the login page
             var vm = await _account.BuildLoginViewModelAsync(returnUrl);
@@ -64,16 +65,15 @@ namespace ProjectApiNetCore.Controllers
                 return await ExternalLogin(vm.ExternalLoginScheme, returnUrl);
             }
 
-            return Ok(vm);
+            return View(vm);
         }
 
         /// <summary>
         /// Handle postback from username/password login
         /// </summary>
-        [Microsoft.AspNetCore.Mvc.HttpPost]
-       // [ValidateAntiForgeryToken]
-        [Microsoft.AspNetCore.Mvc.Route("login")]
-        public async Task<IActionResult> Login([Microsoft.AspNetCore.Mvc.FromBody]LoginInputModel model,[FromUri] string button)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login(LoginInputModel model, string button)
         {
             if (button != "login")
             {
@@ -85,7 +85,7 @@ namespace ProjectApiNetCore.Controllers
                     // denied the consent (even if this client does not require consent).
                     // this will send back an access denied OIDC error response to the client.
                     await _interaction.GrantConsentAsync(context, ConsentResponse.Denied);
-
+                    
                     // we can trust model.ReturnUrl since GetAuthorizationContextAsync returned non-null
                     return Redirect(model.ReturnUrl);
                 }
@@ -118,6 +118,7 @@ namespace ProjectApiNetCore.Controllers
 
                     // issue authentication cookie with subject ID and username
                     await HttpContext.SignInAsync(user.SubjectId, user.Username, props);
+                    await HttpContext.SignOutAsync(IdentityServerConstants.ExternalCookieAuthenticationScheme);
 
                     // make sure the returnUrl is still valid, and if so redirect back to authorize endpoint or a local page
                     if (_interaction.IsValidReturnUrl(model.ReturnUrl) || Url.IsLocalUrl(model.ReturnUrl))
@@ -135,15 +136,14 @@ namespace ProjectApiNetCore.Controllers
 
             // something went wrong, show form with error
             var vm = await _account.BuildLoginViewModelAsync(model);
-            return Ok(vm);
+            return View(vm);
         }
 
         /// <summary>
         /// initiate roundtrip to external authentication provider
         /// </summary>
-        [Microsoft.AspNetCore.Mvc.HttpGet]
-        [Microsoft.AspNetCore.Mvc.Route("externalLogin")]
-        public async Task<IActionResult> ExternalLogin([FromUri] string provider, [FromUri] string returnUrl)
+        [HttpGet]
+        public async Task<IActionResult> ExternalLogin(string provider, string returnUrl)
         {
             var props = new AuthenticationProperties()
             {
@@ -161,19 +161,6 @@ namespace ProjectApiNetCore.Controllers
             {
                 // see if windows auth has already been requested and succeeded
                 var result = await HttpContext.AuthenticateAsync(AccountOptions.WindowsAuthenticationSchemeName);
-
-                if (result?.Succeeded != true)
-                {
-                    throw new Exception("External authentication error");
-                }
-
-                // retrieve claims of the external user
-                var externalUser = result.Principal;
-                if (externalUser == null)
-                {
-                    throw new Exception("External authentication error");
-                }
-
                 if (result?.Principal is WindowsPrincipal wp)
                 {
                     props.Items.Add("scheme", AccountOptions.WindowsAuthenticationSchemeName);
@@ -205,7 +192,6 @@ namespace ProjectApiNetCore.Controllers
             }
             else
             {
-
                 // start challenge and roundtrip the return URL
                 props.Items.Add("scheme", provider);
                 return Challenge(props, provider);
@@ -215,8 +201,7 @@ namespace ProjectApiNetCore.Controllers
         /// <summary>
         /// Post processing of external authentication
         /// </summary>
-        [Microsoft.AspNetCore.Mvc.HttpGet]
-        [Microsoft.AspNetCore.Mvc.Route("externalLoginCallback")]
+        [HttpGet]
         public async Task<IActionResult> ExternalLoginCallback()
         {
             // read external identity from the temporary cookie
@@ -300,9 +285,8 @@ namespace ProjectApiNetCore.Controllers
         /// <summary>
         /// Show logout page
         /// </summary>
-        [Microsoft.AspNetCore.Mvc.HttpGet]
-        [Microsoft.AspNetCore.Mvc.Route("logout")]
-        public async Task<IActionResult> Logout([FromUri] string logoutId)
+        [HttpGet]
+        public async Task<IActionResult> Logout(string logoutId)
         {
             // build a model so the logout page knows what to display
             var vm = await _account.BuildLogoutViewModelAsync(logoutId);
@@ -314,16 +298,15 @@ namespace ProjectApiNetCore.Controllers
                 return await Logout(vm);
             }
 
-            return Ok(vm);
+            return View(vm);
         }
 
         /// <summary>
         /// Handle logout page postback
         /// </summary>
-        [Microsoft.AspNetCore.Mvc.HttpPost]
+        [HttpPost]
         [ValidateAntiForgeryToken]
-        [Microsoft.AspNetCore.Mvc.Route("logout")]
-        public async Task<IActionResult> Logout([Microsoft.AspNetCore.Mvc.FromBody]LogoutInputModel model)
+        public async Task<IActionResult> Logout(LogoutInputModel model)
         {
             // build a model so the logged out page knows what to display
             var vm = await _account.BuildLoggedOutViewModelAsync(model.LogoutId);
@@ -350,7 +333,7 @@ namespace ProjectApiNetCore.Controllers
                 return SignOut(new AuthenticationProperties { RedirectUri = url }, vm.ExternalAuthenticationScheme);
             }
 
-            return Ok( vm);
+            return View("LoggedOut", vm);
         }
     }
 }

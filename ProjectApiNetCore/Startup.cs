@@ -79,8 +79,7 @@ namespace ProjectApiNetCore
                     policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
                 });
             });
-            services.AddTransient<IRedirectUriValidator, RedirectValidator>();
-            services.AddTransient<ICorsPolicyService, CorsPolicy>();
+
 
             services.AddSwaggerGen(c =>
             {

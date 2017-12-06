@@ -6,7 +6,7 @@ using IdentityServer4.AccessTokenValidation;
 
 namespace IdentityServer.Controllers
 {
-    [Microsoft.AspNetCore.Mvc.Route("api/[controller]")]
+    [Microsoft.AspNetCore.Mvc.Route("[controller]")]
     [Authorize(AuthenticationSchemes = IdentityServerAuthenticationDefaults.AuthenticationScheme)]
     public class AuthController : ControllerBase
     {

@@ -1,21 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Web.Http;
+﻿// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+
 using IdentityServer4.Services;
 using IdentityServer4.Stores;
 using Microsoft.AspNetCore.Mvc;
-using ProjectApiNetCore.Models;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
-namespace IdentityServer.Controllers
+namespace IdentityServer4.Quickstart.UI
 {
     /// <summary>
     /// This sample controller allows a user to revoke grants given to clients
     /// </summary>
-    [SecurityHeader]
-    [Microsoft.AspNetCore.Authorization.Authorize(AuthenticationSchemes = IdentityServer4.IdentityServerConstants.DefaultCookieAuthenticationScheme)]
-    [Microsoft.AspNetCore.Mvc.Route("grants")]
+    [SecurityHeaders]
+    [Authorize]
     public class GrantsController : Controller
     {
         private readonly IIdentityServerInteractionService _interaction;
@@ -34,19 +35,18 @@ namespace IdentityServer.Controllers
         /// <summary>
         /// Show list of grants
         /// </summary>
-        [Microsoft.AspNetCore.Mvc.HttpGet]
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var bla = await BuildViewModelAsync();
-            return Ok(bla);
+            return View("Index", await BuildViewModelAsync());
         }
 
         /// <summary>
         /// Handle postback to revoke a client
         /// </summary>
-        [Microsoft.AspNetCore.Mvc.HttpPost]
+        [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Revoke([FromUri]string clientId)
+        public async Task<IActionResult> Revoke(string clientId)
         {
             await _interaction.RevokeUserConsentAsync(clientId);
             return RedirectToAction("Index");
@@ -57,7 +57,7 @@ namespace IdentityServer.Controllers
             var grants = await _interaction.GetAllUserConsentsAsync();
 
             var list = new List<GrantViewModel>();
-            foreach (var grant in grants)
+            foreach(var grant in grants)
             {
                 var client = await _clients.FindClientByIdAsync(grant.ClientId);
                 if (client != null)
