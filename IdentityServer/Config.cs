@@ -23,10 +23,10 @@ namespace IdentityServer
         {
             return new List<ApiResource>
             {
-                new ApiResource("api", "Demo API")
-                {
-                    ApiSecrets = { new Secret("secret".Sha256()) }
-                }
+                //new ApiResource("api1", "Demo API")
+                //{
+                //    ApiSecrets = { new Secret("secret".Sha256()) }
+                //}
             };
         }
 
@@ -34,27 +34,18 @@ namespace IdentityServer
         {
             return new List<Client>
             {
-                // native clients
-                // server to server
-                new Client
-                {
-                    ClientId = "client",
-                    ClientSecrets = { new Secret("secret".Sha256()) },
-
-                    AllowedGrantTypes = GrantTypes.ClientCredentials,
-                    AllowedScopes = { "api" },
-                },
-
-                // implicit (e.g. SPA or OIDC authentication)
+           
                 new Client
                 {
                     ClientId = "mvc",
-                    ClientName = "OIDC Client",
-                    AllowAccessTokensViaBrowser = true,
-                    RequireConsent = true,
+                    ClientName = "MVC Client",
                     AllowedGrantTypes = GrantTypes.Implicit,
-                    RedirectUris = { "http://localhost:5000/signin-oidc" },
-                    PostLogoutRedirectUris = { "http://localhost:5000/signout-callback-oidc" },
+
+                    // where to redirect to after login
+                    RedirectUris = { "http://localhost:5002/signin-oidc" },
+
+                    // where to redirect to after logout
+                    PostLogoutRedirectUris = { "http://localhost:5002/signout-callback-oidc" },
 
                     AllowedScopes = new List<string>
                     {

@@ -1,7 +1,9 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 using IdentityServer4;
 using IdentityServer4.AccessTokenValidation;
+using IdentityServer4.Quickstart.UI;
 using IdentityServer4.Services;
 using IdentityServer4.Validation;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -31,40 +33,19 @@ namespace IdentityServer
          
             services.AddMvc();
 
-            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
-
             services.AddIdentityServer()
+                //.AddSigningCredential("64E9C1E992CF574CAC880D7FE4905CE43E53DBC4", StoreLocation.CurrentUser, NameType.Thumbprint)
                 .AddDeveloperSigningCredential()
                 .AddInMemoryApiResources(Config.GetApis())
                 .AddInMemoryIdentityResources(Config.GetIdentityResources())
                 .AddInMemoryClients(Config.GetClients())
                 .AddTestUsers(TestUsers.Users);
-                //.AddSigningCredential(IdentityServerBuilderExtensionsCrypto.CreateRsaSecurityKey())
-                //.AddInMemoryPersistedGrants();
-
-
-            services.AddAuthentication(options =>
-                {
-                    options.DefaultScheme = "Cookies";
-                    options.DefaultChallengeScheme = "oidc";
-                })
-                .AddCookie("Cookies")
-                .AddOpenIdConnect("oidc", "OpenIdConnect", options =>
-                {
-                    options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
-                    options.SignOutScheme = IdentityServerConstants.SignoutScheme;
-
-                    options.Authority = "http://localhost:5000";
-                    options.RequireHttpsMetadata = false;
-
-                    options.ClientId = "mvc";
-                    options.SaveTokens = true;
-                });
+  
 
             // add CORS policy for non-IdentityServer endpoints
             services.AddCors(options =>
              {
-                 options.AddPolicy("api", policy =>
+                 options.AddPolicy("api1", policy =>
                  {
                      policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
                  });
@@ -85,23 +66,11 @@ namespace IdentityServer
             {
                 app.UseDeveloperExceptionPage();
             }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
-            }
-
-            app.UseAuthentication();
             app.UseStaticFiles();
             app.UseIdentityServer();
             app.UseMvcWithDefaultRoute();
 
-            app.UseSwagger();
-
-            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint.
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "IdentityServer V1");
-            });
+         
         }
     }
 }
