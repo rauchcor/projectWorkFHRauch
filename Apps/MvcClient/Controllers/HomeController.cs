@@ -34,6 +34,11 @@ namespace MvcClient.Controllers
       
         public async Task Logout()
         {
+            /*because the Spezification is designed to run on multiple domains
+            for the user to be logged out everywhere he has to be send back to the token server
+            it triggers the end_session_endpoint which we have seen before in the wellknown openidconnect-configuration
+            this implements the sign out spezification
+            */
             await HttpContext.SignOutAsync("Cookies");
             await HttpContext.SignOutAsync("oidc");
         }
@@ -43,18 +48,18 @@ namespace MvcClient.Controllers
             return View();
         }
 
-        public async Task<IActionResult> CallApiUsingClientCredentials()
-        {
-            var tokenClient = new TokenClient("http://localhost:5000/connect/token", "mvc", "secret");
-            var tokenResponse = await tokenClient.RequestClientCredentialsAsync("api1");
+        //public async Task<IActionResult> CallApiUsingClientCredentials()
+        //{
+        //    var tokenClient = new TokenClient("http://localhost:5000/connect/token", "mvc", "secret");
+        //    var tokenResponse = await tokenClient.RequestClientCredentialsAsync("carApi");
 
-            var client = new HttpClient();
-            client.SetBearerToken(tokenResponse.AccessToken);
-            var content = await client.GetStringAsync("http://localhost:5001/identity");
+        //    var client = new HttpClient();
+        //    client.SetBearerToken(tokenResponse.AccessToken);
+        //    var content = await client.GetStringAsync("http://localhost:5001/api/Cars/claims");
 
-            ViewBag.Json = JArray.Parse(content).ToString();
-            return View("json");
-        }
+        //    ViewBag.Json = JArray.Parse(content).ToString();
+        //    return View("json");
+        //}
 
         public async Task<IActionResult> CallApiUsingUserAccessToken()
         {
@@ -62,10 +67,23 @@ namespace MvcClient.Controllers
 
             var client = new HttpClient();
             client.SetBearerToken(accessToken);
-            var content = await client.GetStringAsync("http://localhost:5001/identity");
+  
 
-            ViewBag.Json = JArray.Parse(content).ToString();
+
+            var response = await client.GetAsync("http://localhost:5001/api/Cars/claims");
+            if (!response.IsSuccessStatusCode)
+            {
+                ViewBag.Json = "Error" + response.StatusCode;
+            
+            }
+            else
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                ViewBag.Json = JArray.Parse(content).ToString();
+            
+            }
             return View("json");
+
         }
     }
 }

@@ -23,10 +23,7 @@ namespace IdentityServer
         {
             return new List<ApiResource>
             {
-                //new ApiResource("api1", "Demo API")
-                //{
-                //    ApiSecrets = { new Secret("secret".Sha256()) }
-                //}
+                new ApiResource("carApi", "Car API")
             };
         }
 
@@ -39,18 +36,24 @@ namespace IdentityServer
                 {
                     ClientId = "mvc",
                     ClientName = "MVC Client",
-                    AllowedGrantTypes = GrantTypes.Implicit,
-
+                    AllowedGrantTypes = GrantTypes.Hybrid,
+                    ClientSecrets =
+                    {
+                        //validate against the hash of the secret
+                        new Secret("secret".Sha256())
+                    },
                     // where to redirect to after login
                     RedirectUris = { "http://localhost:5002/signin-oidc" },
-
+                    //with this the clients that are logged in get logged out when the logout is triggered somewhere else
+                    BackChannelLogoutUri = "http://localhost:5002/signout-oidc",
                     // where to redirect to after logout
                     PostLogoutRedirectUris = { "http://localhost:5002/signout-callback-oidc" },
 
                     AllowedScopes = new List<string>
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
-                        IdentityServerConstants.StandardScopes.Profile
+                        IdentityServerConstants.StandardScopes.Profile,
+                        "carApi"
                     }
                 }
 
