@@ -26,7 +26,7 @@ namespace MvcClient
                     options.SignInScheme = "Cookies";
                     options.Authority = "http://localhost:5000";
                     options.RequireHttpsMetadata = false;
-                    options.ClientId = "mvc";
+                    options.ClientId = "mvcHybrid";
                     /*in order for the mvc app to get the access_token the app it self has to 
                      * authenticate to the tokenserver therefore it needs the ClientSecret
                      * generate a 128 bit random number as a secret not 'secret' thats bad

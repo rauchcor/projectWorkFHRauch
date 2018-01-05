@@ -31,11 +31,35 @@ namespace IdentityServer
         {
             return new List<Client>
             {
-           
+                //mvc Angular
                 new Client
                 {
                     ClientId = "mvc",
                     ClientName = "MVC Client",
+                    AllowedGrantTypes = GrantTypes.HybridAndClientCredentials,
+
+                    RequireConsent = true,
+
+                    ClientSecrets =
+                    {
+                        new Secret("secret".Sha256())
+                    },
+
+                    RedirectUris = { "http://localhost:5002/signin-oidc" },
+                    PostLogoutRedirectUris = { "http://localhost:5002/signout-callback-oidc" },
+
+                    AllowedScopes =
+                    {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        "carApi"
+                    },
+                    AllowOfflineAccess = true
+                },
+                new Client
+                {
+                    ClientId = "mvcHybrid",
+                    ClientName = "MVC Client Hybrid",
                     AllowedGrantTypes = GrantTypes.Hybrid,
                     ClientSecrets =
                     {
@@ -55,6 +79,27 @@ namespace IdentityServer
                         IdentityServerConstants.StandardScopes.Profile,
                         "carApi"
                     }
+                },
+
+                // OpenID Connect implicit flow client (Angular)
+                new Client
+                {
+                    ClientId = "ng",
+                    ClientName = "Angular Client",
+                    AllowedGrantTypes = GrantTypes.Implicit,
+                    AllowAccessTokensViaBrowser = true,
+                    RequireConsent = true,
+
+                    RedirectUris = { "http://localhost:4427/callback" },
+                    PostLogoutRedirectUris = { "http://localhost:4427/home" },
+                    AllowedCorsOrigins = { "http://localhost:4427" },
+
+                    AllowedScopes =
+                    {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        "carApi"
+                    },
                 }
 
             };

@@ -12,6 +12,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { CommonModule } from '@angular/common';
 import { HttpModule } from '@angular/http';
 import { BackendServiceModule } from './services/rest-api/backend.module';
+import { OAuthModule } from 'angular-oauth2-oidc';
 
 
 export function startupConfigServiceFactory(configService: ConfigService): Function {
@@ -32,7 +33,9 @@ export function startupConfigServiceFactory(configService: ConfigService): Funct
     AppRoutingModule,
     CommonModule,
     BackendServiceModule,
-    HttpModule
+    HttpModule,
+    BrowserModule,
+    OAuthModule.forRoot()
   ],
   providers: [
     ConfigService,

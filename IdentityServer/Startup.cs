@@ -34,23 +34,26 @@ namespace IdentityServer
             services.AddMvc();
 
             services.AddIdentityServer()
-                //.AddSigningCredential("64E9C1E992CF574CAC880D7FE4905CE43E53DBC4", StoreLocation.CurrentUser, NameType.Thumbprint)
-                .AddDeveloperSigningCredential()
+                .AddSigningCredential("B8397639321E28E5168BFCA7195A451B1613DCF5", StoreLocation.CurrentUser, NameType.Thumbprint)
+                //.AddDeveloperSigningCredential()
                 .AddInMemoryApiResources(Config.GetApis())
                 .AddInMemoryIdentityResources(Config.GetIdentityResources())
                 .AddInMemoryClients(Config.GetClients())
                 .AddTestUsers(TestUsers.Users);
-  
 
+
+      
             // add CORS policy for non-IdentityServer endpoints
             services.AddCors(options =>
              {
-                 options.AddPolicy("api1", policy =>
+                 options.AddPolicy("allowed", policy =>
                  {
                      policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+                     //policy.WithOrigins("http://localhost:4427")
+                     //    .AllowAnyMethod()
+                     //    .AllowAnyHeader();
                  });
              });
-
 
             services.AddSwaggerGen(c =>
             {
@@ -66,6 +69,8 @@ namespace IdentityServer
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseCors("allowed");
             app.UseStaticFiles();
             app.UseIdentityServer();
             app.UseMvcWithDefaultRoute();
