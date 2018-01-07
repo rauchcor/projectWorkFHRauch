@@ -72,11 +72,14 @@ namespace IdentityServer
                     BackChannelLogoutUri = "http://localhost:5002/signout-oidc",
                     // where to redirect to after logout
                     PostLogoutRedirectUris = { "http://localhost:5002/signout-callback-oidc" },
+                    //With allowOfflineAccess also refresh_token will be send -> there is no refresh_token when using implicit flow
+                    AllowOfflineAccess =true,
 
                     AllowedScopes = new List<string>
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
+                        IdentityServerConstants.StandardScopes.OfflineAccess,
                         "carApi"
                     }
                 },
@@ -87,6 +90,7 @@ namespace IdentityServer
                     ClientId = "ng",
                     ClientName = "Angular Client",
                     AllowedGrantTypes = GrantTypes.Implicit,
+                    //token are send to the browser -- in the implicit flow the access_token is send as a result of the authentication
                     AllowAccessTokensViaBrowser = true,
                     RequireConsent = true,
 

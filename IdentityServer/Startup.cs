@@ -42,18 +42,18 @@ namespace IdentityServer
                 .AddTestUsers(TestUsers.Users);
 
 
-      
-            // add CORS policy for non-IdentityServer endpoints
+
+
             services.AddCors(options =>
-             {
-                 options.AddPolicy("allowed", policy =>
-                 {
-                     policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
-                     //policy.WithOrigins("http://localhost:4427")
-                     //    .AllowAnyMethod()
-                     //    .AllowAnyHeader();
-                 });
-             });
+            {
+                // this defines a CORS policy called "default"
+                options.AddPolicy("default", policy =>
+                {
+                    policy.WithOrigins("http://localhost:5002", "http://localhost:4427")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+            });
 
             services.AddSwaggerGen(c =>
             {
@@ -70,7 +70,7 @@ namespace IdentityServer
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseCors("allowed");
+            app.UseCors("default");
             app.UseStaticFiles();
             app.UseIdentityServer();
             app.UseMvcWithDefaultRoute();

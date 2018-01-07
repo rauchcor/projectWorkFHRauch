@@ -22,3 +22,20 @@
         </tr>
     </tbody>
 </table>
+
+<h1>Claims</h1>
+<p>Fetching data from secure API with access token</p>
+<table class='table' *ngIf="claims">
+    <thead>
+        <tr>
+            <th>Type</th>
+            <th>Value</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let forecast of claims">
+            <td>{{ forecast.type }}</td>
+            <td>{{ forecast.value }}</td>
+        </tr>
+    </tbody>
+</table>

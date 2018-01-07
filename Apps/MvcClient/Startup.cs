@@ -17,7 +17,8 @@ namespace MvcClient
             services.AddAuthentication(options =>
                 {
                     options.DefaultAuthenticateScheme = "Cookies";
-                    options.DefaultChallengeScheme = "oidc";
+                    options.DefaultChallengeScheme = "oidc"; 
+                    
                 })
                 .AddCookie("Cookies")
                 .AddOpenIdConnect("oidc", options =>
@@ -41,9 +42,10 @@ namespace MvcClient
                     options.ResponseType = "code id_token";
                     //puts the id_token into the cookie (its the only state management we have) 
                     options.SaveTokens = true;
-
+                   
                     options.Scope.Add("profile");
                     options.Scope.Add("openid");
+                    options.Scope.Add("offline_access");
                     //overlode the scope for authorization
                     options.Scope.Add("carApi");
                 });

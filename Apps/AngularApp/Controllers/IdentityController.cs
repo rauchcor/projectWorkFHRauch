@@ -11,6 +11,7 @@ using Newtonsoft.Json.Linq;
 
 namespace AngularClient.Controllers
 {
+    [Route("api/[controller]")]
     public class IdentityController: Controller
     {
         [Authorize]

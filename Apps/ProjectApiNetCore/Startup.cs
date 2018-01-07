@@ -52,13 +52,16 @@ namespace ProjectApiNetCore
             services.AddMvc();
 
 
-    
+
 
             services.AddCors(options =>
             {
-                options.AddPolicy("carApi", policy =>
+                // this defines a CORS policy called "default"
+                options.AddPolicy("default", policy =>
                 {
-                    policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+                    policy.WithOrigins("http://localhost:5002", "http://localhost:4427")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
                 });
             });
 
@@ -77,6 +80,7 @@ namespace ProjectApiNetCore
                 app.UseDeveloperExceptionPage();
             }
               app.UseSwagger();
+            app.UseCors("default");
             app.UseAuthentication();
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>

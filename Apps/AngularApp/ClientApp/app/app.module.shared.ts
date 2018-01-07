@@ -15,6 +15,7 @@ import { CounterComponent } from './components/counter/counter.component';
 import { AuthService } from './components/services/auth.service';
 import { GlobalEventsManager } from './components/services/global.events.manager';
 import { AuthGuardService } from './components/services/auth-guard.service';
+import { UnauthorizedComponent } from './components/unauthorized/unauthorized.component';
 
 @NgModule({
     declarations: [
@@ -23,7 +24,8 @@ import { AuthGuardService } from './components/services/auth-guard.service';
         CounterComponent,
         FetchDataComponent,
         HomeComponent,
-        CallbackComponent
+        CallbackComponent,
+        UnauthorizedComponent
     ],
     imports: [
         CommonModule,
@@ -34,6 +36,7 @@ import { AuthGuardService } from './components/services/auth-guard.service';
             { path: 'home', component: HomeComponent },
             { path: 'callback', component: CallbackComponent },    
             { path: 'counter', component: CounterComponent },
+            { path: 'unauthorized', component: UnauthorizedComponent },
             { path: 'fetch-data', component: FetchDataComponent, canActivate:[AuthGuardService]  },
             { path: '**', redirectTo: 'home' }
         ])
