@@ -79,7 +79,7 @@ namespace ProjectApiNetCore
             {
                 app.UseDeveloperExceptionPage();
             }
-              app.UseSwagger();
+             app.UseSwagger();
             app.UseCors("default");
             app.UseAuthentication();
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint.

@@ -11,14 +11,14 @@ export class AuthGuardService implements CanActivate {
     }
 
     canActivate(): boolean | Observable<boolean> | Promise<boolean> {
-        if (typeof window !== 'undefined') {
+      //  if (typeof window !== undefined) {
         return this._authService.isLoggedIn();
-        }
+      //  }
     }
 
     checkIfWindowDefined(){
 
-        if (typeof window !== 'undefined') {
+        if (typeof window !== undefined) {
             return true;
         }else {
             return false;

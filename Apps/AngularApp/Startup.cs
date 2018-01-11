@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.Webpack;
@@ -23,31 +24,45 @@ namespace d
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
 
+            services.AddMvc();
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
-            services.AddAuthentication(options =>
+            services.AddAuthentication("Bearer")
+                .AddJwtBearer(options =>
                 {
-                    options.DefaultAuthenticateScheme = "Cookies";
-                    options.DefaultChallengeScheme = "oidc";
-                })
-                .AddCookie("Cookies")
-                .AddOpenIdConnect("oidc", options =>
-                {
-
-                    options.SignInScheme = "Cookies";
                     options.Authority = "http://localhost:5000";
                     options.RequireHttpsMetadata = false;
-                    options.ClientId = "mvc";
-                    options.ResponseType = "code id_token";
-                    //puts the id_token into the cookie (its the only state management we have) 
-                    options.SaveTokens = true;
 
-                    options.Scope.Add("profile");
-                    options.Scope.Add("openid");
-                    options.Scope.Add("carApi");
+                    options.SaveToken = true;
                 });
+
+   
+            //services.AddMvc();
+
+            //JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
+            //services.AddAuthentication(options =>
+            //    {
+            //        options.DefaultAuthenticateScheme = "Cookies";
+            //        options.DefaultChallengeScheme = "oidc";
+            //    })
+            //    .AddCookie("Cookies")
+            //    .AddOpenIdConnect("oidc", options =>
+            //    {
+
+            //        options.SignInScheme = "Cookies";
+            //        options.Authority = "http://localhost:5000";
+            //        options.RequireHttpsMetadata = false;
+            //        options.ClientId = "mvc";
+            //        options.ResponseType = "code id_token";
+            //        //puts the id_token into the cookie (its the only state management we have) 
+            //        options.SaveTokens = true;
+
+            //        options.Scope.Add("profile");
+            //        options.Scope.Add("openid");
+            //        options.Scope.Add("carApi");
+            //    });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -68,7 +83,8 @@ namespace d
 
             app.UseAuthentication();
             app.UseStaticFiles();
-          //  app.UseMvcWithDefaultRoute();
+            //  app.UseMvcWithDefaultRoute();
+  
 
             app.UseMvc(routes =>
             {
