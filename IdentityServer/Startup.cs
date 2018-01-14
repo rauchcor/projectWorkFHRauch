@@ -41,9 +41,6 @@ namespace IdentityServer
                 .AddInMemoryClients(Config.GetClients())
                 .AddTestUsers(TestUsers.Users);
 
-
-
-
             services.AddCors(options =>
             {
                 // this defines a CORS policy called "default"

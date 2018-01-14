@@ -16,6 +16,7 @@ import { AuthService } from './components/services/auth.service';
 import { GlobalEventsManager } from './components/services/global.events.manager';
 import { AuthGuardService } from './components/services/auth-guard.service';
 import { UnauthorizedComponent } from './components/unauthorized/unauthorized.component';
+import { UserManagerService } from './components/services/usermanager.service';
 
 @NgModule({
     declarations: [
@@ -41,8 +42,10 @@ import { UnauthorizedComponent } from './components/unauthorized/unauthorized.co
             { path: '**', redirectTo: 'home' }
         ])
     ],
-    providers: [ AuthService, AuthGuardService, GlobalEventsManager ]
+    providers: [ AuthService, AuthGuardService, GlobalEventsManager, UserManagerService ]
     
 })
 export class AppModuleShared {
+
+
 }

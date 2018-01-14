@@ -19,6 +19,8 @@ const settings: any = {
   silent_redirect_uri: 'http://localhost:4427/silent-renew.html',
   automaticSilentRenew: true,
   accessTokenExpiringNotificationTime: 4,
+
+  
   // silentRequestTimeout:10000,
 
   filterProtocolClaims: true,
@@ -62,7 +64,33 @@ export class AuthService {
     }
   }
 
+/**
+  isLoggedIn(): Promise<boolean> {
 
+    return this._mgr
+      .map((usermanager) => {
+        if (typeof window !== 'undefined') {
+    return usermanager
+          .getUser()
+          .then((user) => {
+            if (user) {
+              this._currentUser = user;
+              return true;
+            } else {
+              this._router.navigate(['unauthorized']);
+              return false;
+            }
+          })
+          .catch((err) => {
+            this._router.navigate(['unauthorized']);
+            return false;
+          });}else{
+            
+          }
+      }).switch();
+
+
+  } */
   isLoggedIn(): Promise<boolean> {
     return this._mgr
       .getUser()

@@ -13,7 +13,6 @@ namespace ProjectApiNetCore.Context
             : base(options)
         {
         }
-
         public DbSet<CarDto> CarItems { get; set; }
 
     }

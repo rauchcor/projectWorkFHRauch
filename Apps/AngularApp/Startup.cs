@@ -26,20 +26,11 @@ namespace d
         {
 
             services.AddMvc();
-            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
-            services.AddAuthentication("Bearer")
-                .AddJwtBearer(options =>
-                {
-                    options.Authority = "http://localhost:5000";
-                    options.RequireHttpsMetadata = false;
-
-                    options.SaveToken = true;
-                });
 
    
         }
-
+        
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
@@ -56,9 +47,7 @@ namespace d
                 app.UseExceptionHandler("/Home/Error");
             }
 
-            app.UseAuthentication();
             app.UseStaticFiles();
-            //  app.UseMvcWithDefaultRoute();
   
 
             app.UseMvc(routes =>

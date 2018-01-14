@@ -14,28 +14,28 @@ namespace AngularClient.Controllers
     [Route("api/[controller]")]
     public class IdentityController: Controller
     {
-        [Authorize]
-        public async Task<IActionResult> Index()
-        {
-            var apiCallUsingUserAccessToken = await ApiCallUsingUserAccessToken();
-            ViewData["apiCallUsingUserAccessToken"] = apiCallUsingUserAccessToken.IsSuccessStatusCode ? await apiCallUsingUserAccessToken.Content.ReadAsStringAsync() : apiCallUsingUserAccessToken.StatusCode.ToString();
+        //[Authorize]
+        //public async Task<IActionResult> Index()
+        //{
+        //    var apiCallUsingUserAccessToken = await ApiCallUsingUserAccessToken();
+        //    ViewData["apiCallUsingUserAccessToken"] = apiCallUsingUserAccessToken.IsSuccessStatusCode ? await apiCallUsingUserAccessToken.Content.ReadAsStringAsync() : apiCallUsingUserAccessToken.StatusCode.ToString();
 
-            return View();
-        }
+        //    return View();
+        //}
 
-        public async Task<HttpResponseMessage> ApiCallUsingUserAccessToken()
-        {
-            var accessToken = await HttpContext.GetTokenAsync("access_token");
+        //public async Task<HttpResponseMessage> ApiCallUsingUserAccessToken()
+        //{
+        //    var accessToken = await HttpContext.GetTokenAsync("access_token");
 
-            var client = new HttpClient();
-            client.SetBearerToken(accessToken);
-            return await client.GetAsync("http://localhost:5001/api/Cars/claims");
-        }
+        //    var client = new HttpClient();
+        //    client.SetBearerToken(accessToken);
+        //    return await client.GetAsync("http://localhost:5001/api/Cars/claims");
+        //}
 
-        public async Task Logout()
-        {
-            await HttpContext.Authentication.SignOutAsync("Cookies");
-            await HttpContext.Authentication.SignOutAsync("oidc");
-        }
+        //public async Task Logout()
+        //{
+        //    await HttpContext.Authentication.SignOutAsync("Cookies");
+        //    await HttpContext.Authentication.SignOutAsync("oidc");
+        //}
     }
 }

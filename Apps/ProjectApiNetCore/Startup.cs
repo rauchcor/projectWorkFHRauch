@@ -34,9 +34,7 @@ namespace ProjectApiNetCore
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<CarContext>(opt => opt.UseInMemoryDatabase("CarList"));
-
-
+            services.AddMvc();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddIdentityServerAuthentication(options =>
                 {
@@ -46,25 +44,7 @@ namespace ProjectApiNetCore
 
                     // name of the API resource
                     options.ApiName = "carApi";
-                    //options.ApiSecret = "secret";
                 });
-
-            services.AddMvc();
-
-
-
-
-            services.AddCors(options =>
-            {
-                // this defines a CORS policy called "default"
-                options.AddPolicy("default", policy =>
-                {
-                    policy.WithOrigins("http://localhost:5002", "http://localhost:4427")
-                        .AllowAnyHeader()
-                        .AllowAnyMethod();
-                });
-            });
-
 
             services.AddSwaggerGen(c =>
             {
@@ -79,16 +59,16 @@ namespace ProjectApiNetCore
             {
                 app.UseDeveloperExceptionPage();
             }
-             app.UseSwagger();
-            app.UseCors("default");
+            app.UseStaticFiles();
             app.UseAuthentication();
+
+            app.UseSwagger();
+          
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "ProjectApiCore V1");
             });
-
-
             app.UseMvc();
         }
     }

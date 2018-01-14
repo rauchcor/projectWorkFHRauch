@@ -9,7 +9,6 @@ namespace IdentityServer
 {
     public class Config
     {
-
         public static IEnumerable<IdentityResource> GetIdentityResources()
         {
             return new List<IdentityResource>
@@ -66,11 +65,11 @@ namespace IdentityServer
                         //validate against the hash of the secret
                         new Secret("secret".Sha256())
                     },
-                    // where to redirect to after login
+                    // redirect after login
                     RedirectUris = { "http://localhost:5002/signin-oidc" },
-                    //with this the clients that are logged in get logged out when the logout is triggered somewhere else
+                    //clients that are logged in get logged out when the logout is triggered somewhere else
                     BackChannelLogoutUri = "http://localhost:5002/signout-oidc",
-                    // where to redirect to after logout
+                    // redirect to after logout
                     PostLogoutRedirectUris = { "http://localhost:5002/signout-callback-oidc" },
                     //With allowOfflineAccess also refresh_token will be send -> there is no refresh_token when using implicit flow
                     AllowOfflineAccess =true,
@@ -84,13 +83,13 @@ namespace IdentityServer
                     }
                 },
 
-                // OpenID Connect implicit flow client (Angular)
+                // OpenID Connect Implicit Flow Client (Angular)
                 new Client
                 {
                     ClientId = "ng",
                     ClientName = "Angular Client",
                     AllowedGrantTypes = GrantTypes.Implicit,
-                    //token are send to the browser -- in the implicit flow the access_token is send as a result of the authentication
+                    //Token are send to the browser - the Implicit Code Flow sends a access_token as a result of the authentication
                     AllowAccessTokensViaBrowser = true,
                     RequireConsent = true,
 
